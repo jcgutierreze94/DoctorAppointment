@@ -8,14 +8,14 @@ class Doctor {
     private String name;
     private String speciality;
 
+    // Constructor para asignar los 3 parametros (id, nombre, especialidad)
     public Doctor(int id, String nombre, String especialidad) {
         this.id = id;
         this.name = nombre;
         this.speciality = especialidad;
     }
 
-    // Getters and setters
-
+    // se usan getters y setters para regresar y asignar los valores de id, nombre y especialidad a las variables
     public int getId() {
         return id;
     }
@@ -40,6 +40,7 @@ class Doctor {
         this.speciality = especialidad;
     }
 
+    // El Override nos ayuda a formar en un solo string los datos de los doctores
     @Override
     public String toString() {
         return "Doctor{" +
@@ -54,13 +55,12 @@ class Patient {
     private int id;
     private String name;
 
+    // Constructor para asignar los 3 parametros (id, nombre, especialidad)
     public Patient(int id, String nombre) {
         this.id = id;
         this.name = nombre;
     }
-
-    // Getters and setters
-
+    // se usan getters y setters para regresar y asignar los valores de id y nombre
     public int getId() {
         return id;
     }
@@ -77,6 +77,7 @@ class Patient {
         this.name = nombre;
     }
 
+    // El Override nos ayuda a formar en un solo string los datos de los pacientes
     @Override
     public String toString() {
         return "Paciente{" +
@@ -93,6 +94,7 @@ class Appointment {
     private Doctor doctor;
     private Patient patient;
 
+    // Constructor para asignar los 3 parametros (id, FechaCita, motivo)
     public Appointment(int id, Date FechaCita, String motivo, Doctor doctor, Patient paciente) {
         this.id = id;
         this.appointmentDate = FechaCita;
@@ -101,20 +103,15 @@ class Appointment {
         this.patient = paciente;
     }
 
-    // Getters and setters
-
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
-
     public Date getAppointmentDate() {
         return appointmentDate;
     }
-
     public void setAppointmentDate(Date FechaCita) {
         this.appointmentDate = FechaCita;
     }
@@ -155,6 +152,7 @@ class Appointment {
     }
 }
 
+// Se creo un ArrayList para doctores, pacientes y citas para poder guardar los datos registrados en el archivo .txt
 public class DoctorAppointmentSystem {
     private static List<Doctor> doctors = new ArrayList<>();
     private static List<Patient> patients = new ArrayList<>();
@@ -175,6 +173,7 @@ public class DoctorAppointmentSystem {
         loadAppointments();
 
         int choice;
+        // Esta parte del codigo nos permite mostrar el menu interactivo para el usuario
         do {
             System.out.println("\n---------- Menu ----------");
             System.out.println("1. Registrar Doctor");
@@ -218,15 +217,14 @@ public class DoctorAppointmentSystem {
     }
 
     private static boolean authenticateUser(String usuario, String password) {
-        // Add your authentication logic here
-        // For simplicity, let's assume username: admin, password: password
-        return usuario.equals("jgutierr") && password.equals("Pass123");
+        // Aqui se configuran los datos para el usuario "admin"
+        return usuario.equals("admin") && password.equals("Pass123");
     }
 
     private static void registerDoctor(Scanner lector) {
         System.out.print("Ingrese el ID del doctor: ");
         int id = lector.nextInt();
-        lector.nextLine(); // Consume newline
+        lector.nextLine();
         System.out.print("Ingrese el nombre del doctor: ");
         String nombre = lector.nextLine();
         System.out.print("Ingrese la especialidad del doctor: ");
@@ -263,12 +261,20 @@ public class DoctorAppointmentSystem {
         System.out.println("Doctores disponibles:");
         listDoctors();
         System.out.print("Ingrese el ID del doctor para la cita: ");
+        /*
+         esta es la parte que permite asignar un doctor por medio de su ID a la cita
+         Mas abajo se encuentra el codigo de findDoctorById
+         */
         int IdDoc = lector.nextInt();
         Doctor doctor = findDoctorById(IdDoc);
 
         System.out.println("Pacientes registrados:");
         listPatients();
         System.out.print("Ingrese el ID del paciente para asignar cita: ");
+        /*
+         esta es la parte que permite asignar un paciente por medio de su ID a la cita
+         Mas abajo se encuentra el codigo de findPatientByID
+         */
         int IdPaciente = lector.nextInt();
         Patient paciente = findPatientById(IdPaciente);
 
@@ -319,6 +325,7 @@ public class DoctorAppointmentSystem {
         }
     }
 
+    //
     private static Doctor findDoctorById(int id) {
         for (Doctor doc : doctors) {
             if (doc.getId() == id) {
@@ -337,13 +344,14 @@ public class DoctorAppointmentSystem {
         return null;
     }
 
+    // por medio del BufferedReader se pueden leer los datos almacenados en el archivo .txt
     private static void loadAppointments() {
-        try (BufferedReader lector = new BufferedReader(new FileReader("appointments.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("appointments.txt"))) {
             String line;
             boolean isDoctorsSection = false;
             boolean isPatientsSection = false;
 
-            while ((line = lector.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 if (line.equals("---DOCTORES---")) {
                     isDoctorsSection = true;
                     continue;
@@ -356,16 +364,16 @@ public class DoctorAppointmentSystem {
                 String[] parts = line.split(",");
                 int id = Integer.parseInt(parts[0]);
 
-                if (isDoctorsSection) {
+                if (isDoctorsSection && parts.length >= 3) {
                     String nombre = parts[1];
                     String especialidad = parts[2];
                     Doctor doc = new Doctor(id, nombre, especialidad);
                     doctors.add(doc);
-                } else if (isPatientsSection) {
+                } else if (isPatientsSection && parts.length >= 2) {
                     String nombre = parts[1];
                     Patient paciente = new Patient(id, nombre);
                     patients.add(paciente);
-                } else {
+                } else if (parts.length >= 5) {
                     Date cita = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(parts[1]);
                     String motivo = parts[2];
                     int IdDoc = Integer.parseInt(parts[3]);
@@ -383,6 +391,9 @@ public class DoctorAppointmentSystem {
         }
     }
 
+    /* por medio del BufferedWriter se pueden escribir/guardar los datos al archivo .txt
+    El StringBuilder se renombro como stbu, strb y stb y sirve para manipular y crear strings sin tener que crear tantos objetos
+     */
     private static void saveAppointments() {
         try (BufferedWriter escritor = new BufferedWriter(new FileWriter("appointments.txt"))) {
             for (Appointment cita : appointments) {
