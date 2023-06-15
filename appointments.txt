@@ -1,11 +1,1 @@
-1,2023-06-14 11:30,Chequeo de rutina,1,1
-2,2023-06-15 09:00,Revision general,2,2
-3,2023-06-16 13:00,Cirujia,3,3
----DOCTORES---
-1,Juan Perez,Cardiologo
-2,Pablo Espinoza,Ginecologo
-3,Elena Martinez,Cirujano
----PACIENTES---
-1,Jose Gutierrez
-2,Luz Ramirez
-3,Martha Jimenez
+
